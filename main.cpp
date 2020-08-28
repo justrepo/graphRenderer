@@ -58,7 +58,7 @@ int main(int argc, char **argv) {
             settingsLayout->add(createCentredLabel("radius: "), .3);
 
             auto radiusBox = tgui::EditBox::create();
-            radiusBox->connect(radiusBox->onTextChange.getName(), [&](const string &newString) {
+            radiusBox->connect(radiusBox->onTextChange.getName(), [](const string &newString) {
               try {
                 Node::NodeSettings::getNodeSettings().radius = stod(newString);
               } catch (const exception &e) {}
@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
             settingsLayout->add(createCentredLabel("character size: "), .4);
 
             auto characterSizeBox = tgui::EditBox::create();
-            characterSizeBox->connect(characterSizeBox->onTextChange.getName(), [&](const string &newString) {
+            characterSizeBox->connect(characterSizeBox->onTextChange.getName(), [](const string &newString) {
               size_t characterSize;
               try {
                 characterSize = stod(newString);
@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
           auto generatorsLayout = tgui::HorizontalLayout::create();
           {
             auto planarGenerator = tgui::Button::create("Generate planar graph");
-            planarGenerator->connect(planarGenerator->onClick.getName(), [&]() {
+            planarGenerator->connect(planarGenerator->onClick.getName(), [nBox, &graph]() {
               size_t numberOfNodes;
               try {
                 numberOfNodes = stoull(nBox->getText().toAnsiString());
@@ -110,7 +110,7 @@ int main(int argc, char **argv) {
             generatorsLayout->add(planarGenerator);
 
             auto treeGenerator = tgui::Button::create("Generate combination tree");
-            treeGenerator->connect(treeGenerator->onClick.getName(), [&]() {
+            treeGenerator->connect(treeGenerator->onClick.getName(), [nBox, kBox, &graph]() {
               size_t numberOfNodes;
               try {
                 numberOfNodes = stoull(nBox->getText().toAnsiString());
@@ -142,19 +142,19 @@ int main(int argc, char **argv) {
           auto saveLoadLayout = tgui::HorizontalLayout::create();
           {
             auto saveButton = tgui::Button::create("Save graph");
-            saveButton->connect(saveButton->onClick.getName(), [&]() {
+            saveButton->connect(saveButton->onClick.getName(), [fileNameBox, &graph]() {
               graph.save(fileNameBox->getText());
             });
             saveLoadLayout->add(saveButton);
 
             auto loadButton = tgui::Button::create("Load graph");
-            loadButton->connect(loadButton->onClick.getName(), [&]() {
+            loadButton->connect(loadButton->onClick.getName(), [fileNameBox, &graph]() {
               graph.load(fileNameBox->getText());
             });
             saveLoadLayout->add(loadButton);
 
             auto saveImageButton = tgui::Button::create("Save image of graph");
-            saveImageButton->connect(saveImageButton->onClick.getName(), [&]() {
+            saveImageButton->connect(saveImageButton->onClick.getName(), [fileNameBox, &graph]() {
               saveImageOfGraph(graph, fileNameBox->getText());
             });
             saveLoadLayout->add(saveImageButton);
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
           auto subgraphButtonsLayout = tgui::HorizontalLayout::create();
           {
             auto showButton = tgui::Button::create("Show selected subgraph");
-            showButton->connect(showButton->onClick.getName(), [&]() {
+            showButton->connect(showButton->onClick.getName(), [showButton, subgraphBox, &graph]() {
               if (showButton->getText()[5] == 's') {
                 string subgraphString = subgraphBox->getText();
                 stringstream subgraphStream(subgraphString);
